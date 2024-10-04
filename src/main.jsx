@@ -8,9 +8,5 @@ ReactDOM.render(
     <App />
   </BrowserRouter>,
   document.getElementById('root')
-
-//personal
-  SHA256:nxtJW7ymjn/vL56RjD1DR5Peqd3KXAK8GcgSuvClBP8 
-  //work
-  SHA256:eaJOZbLUepVAKpfZvfnQ/+Px0eeqJuvFiLunziihspU
+  
 );
