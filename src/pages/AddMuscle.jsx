@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
+import useAuth from '../hooks/useAuth'; 
 
 const AddMuscle = () => {
+  // const user_id = useAuth(); 
   const [muscleName, setMuscleName] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axios
-      .post('/api/muscles', { name: muscleName })
+      .post(`API_BASE_URL/muscles`, { name: muscleName,})
       .then((response) => {
-        // Handle success (e.g., notify user)
-        alert('Muscle added successfully!');
+        
         setMuscleName('');
       })
       .catch((error) => {
-        // Handle error
+        
         console.error('Error adding muscle', error);
       });
   };
@@ -38,6 +39,7 @@ const AddMuscle = () => {
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Add Muscle
         </Button>
+
       </form>
     </Container>
   );

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: ''});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,18 +13,14 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Call your login API
+    
     axios
-      .post('/api/login', form)
+      .post('http://localhost:5000/api/auth/login', form)
       .then((response) => {
-        // Save token to localStorage or context
         localStorage.setItem('token', response.data.token);
-        // Redirect to add-muscle page
         navigate('/add-muscle');
       })
       .catch((error) => {
-        // Handle error
         console.error('Login error', error);
       });
   };
@@ -37,9 +33,9 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <TextField
           label="Email"
-          name="email"
+          name="username"
           type="email"
-          value={form.email}
+          value={form.username}
           onChange={handleChange}
           fullWidth
           margin="normal"

@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import AddMuscle from './pages/AddMuscle';
 import AddExercise from './pages/AddExercise';
 import ProtectedRoute from './components/ProtectedRoute';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (

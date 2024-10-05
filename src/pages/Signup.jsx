@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify'; // Import toast and ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Signup = () => {
-  const [form, setForm] = useState({ username: '', email: '', password: '' });
+  const [form, setForm] = useState({ username: '', email: '', password: '', role: 'USER' });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,15 +17,17 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    console.log(API_BASE_URL);
     axios
-      .post('/api/signup', form)
+      .post(`${API_BASE_URL}/auth/signup`, form)
       .then((response) => {
-
+        console.log(response.data);
+        toast.success('Signup successful!', { position: toast.POSITION.TOP_RIGHT });
         navigate('/login');
       })
       .catch((error) => {
         console.error('Signup error', error);
+        toast.error('Signup failed! Please try again.', { position: toast.POSITION.TOP_RIGHT });
       });
   };
 
@@ -64,6 +70,9 @@ const Signup = () => {
           Signup
         </Button>
       </form>
+
+      {/* ToastContainer must be included to display toasts */}
+      <ToastContainer />
     </Container>
   );
 };
