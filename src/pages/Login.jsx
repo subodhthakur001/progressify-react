@@ -18,6 +18,11 @@ const Login = () => {
       .post('http://localhost:5000/api/auth/login', form)
       .then((response) => {
         localStorage.setItem('token', response.data.token);
+        const token = response.data.token;
+        const tokenParts = token.split(".");
+        const payload = JSON.parse(atob(tokenParts[1]));
+        localStorage.setItem
+        console.log("payload is ",payload);
         navigate('/add-muscle');
       })
       .catch((error) => {

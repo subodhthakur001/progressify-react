@@ -14,7 +14,6 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Protected Routes */}
       <Route
         path="/add-muscle"
         element={
@@ -32,7 +31,6 @@ function App() {
         }
       />
 
-      {/* Redirect to login by default */}
       <Route path="*" element={<Login />} />
     </Routes>
   );

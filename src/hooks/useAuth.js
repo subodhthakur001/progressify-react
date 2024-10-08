@@ -1,19 +1,19 @@
-
-import { useEffect, useState } from 'react';
-import * as jwtDecode from 'jwt-decode'; 
+import { useState, useEffect } from "react";
 
 const useAuth = () => {
   const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    setToken(localStorage.getItem("token"));
     if (token) {
-      const decodedToken = jwtDecode(token);
-      setUserId(decodedToken.userId); 
+      const tokenParts = token.split(".");
+      const payload = JSON.parse(atob(tokenParts[1]));
+      setUserId(payload?.userId);
     }
-  }, []);
+  }, []); 
 
-  return userId;
+  return {userId,token};
 };
 
 export default useAuth;

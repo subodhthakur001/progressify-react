@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { TextField, Button, Container, Typography } from '@mui/material';
-import axios from 'axios';
-import useAuth from '../hooks/useAuth'; 
+import React, { useState } from "react";
+import { TextField, Button, Container, Typography } from "@mui/material";
+import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 const AddMuscle = () => {
-  // const user_id = useAuth(); 
-  const [muscleName, setMuscleName] = useState('');
-
+  // const user_id = useAuth();
+  const [muscleName, setMuscleName] = useState("");
+  const {userId,token} = useAuth();
+  console.log(token);
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axios
-      .post(`API_BASE_URL/muscles`, { name: muscleName,})
+      .post(`API_BASE_URL/muscles`, { name: muscleName, user_id : userId, token : "token"})
       .then((response) => {
+        setMuscleName("");
         
-        setMuscleName('');
       })
       .catch((error) => {
-        
-        console.error('Error adding muscle', error);
+        console.error("Error adding muscle", error);
       });
   };
 
@@ -39,7 +39,6 @@ const AddMuscle = () => {
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Add Muscle
         </Button>
-
       </form>
     </Container>
   );
