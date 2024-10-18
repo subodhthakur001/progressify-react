@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify'; // Import toast and ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
+import { ToastContainer, toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+import useToast from '../hooks/useToast'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Signup = () => {
+  console.log("api url is",API_BASE_URL);
   const [form, setForm] = useState({ username: '', email: '', password: '', role: 'USER' });
   const navigate = useNavigate();
+  const {notifySuccess, notifyError} = useToast();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,12 +25,12 @@ const Signup = () => {
       .post(`${API_BASE_URL}/auth/signup`, form)
       .then((response) => {
         console.log(response.data);
-        toast.success('Signup successful!', { position: toast.POSITION.TOP_RIGHT });
+        notifySuccess("Signup successfully !!")
         navigate('/login');
       })
       .catch((error) => {
         console.error('Signup error', error);
-        toast.error('Signup failed! Please try again.', { position: toast.POSITION.TOP_RIGHT });
+        notifyError("Sorry ! Something went wrong")
       });
   };
 

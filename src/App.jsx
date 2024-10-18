@@ -5,34 +5,35 @@ import Login from './pages/Login';
 import AddMuscle from './pages/AddMuscle';
 import AddExercise from './pages/AddExercise';
 import ProtectedRoute from './components/ProtectedRoute';
-import 'react-toastify/dist/ReactToastify.css';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 function App() {
   return (
-    <Routes>
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
-
-      <Route
-        path="/add-muscle"
-        element={
-          <ProtectedRoute>
-            <AddMuscle />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/add-exercise"
-        element={
-          <ProtectedRoute>
-            <AddExercise />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route path="*" element={<Login />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/add-muscle"
+          element={
+            <ProtectedRoute>
+              <AddMuscle />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-exercise"
+          element={
+            <ProtectedRoute>
+              <AddExercise />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Login />} />
+      </Routes>
+      <ToastContainer />
+    </>
   );
 }
 

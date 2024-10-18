@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import useToast from '../hooks/useToast';
 
 const Login = () => {
   const [form, setForm] = useState({ username: '', password: ''});
   const navigate = useNavigate();
+  const {notifySuccess, notifyError} = useToast();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,12 +23,15 @@ const Login = () => {
         const token = response.data.token;
         const tokenParts = token.split(".");
         const payload = JSON.parse(atob(tokenParts[1]));
-        localStorage.setItem
-        console.log("payload is ",payload);
         navigate('/add-muscle');
+        notifySuccess('Login Successfully !!')
       })
       .catch((error) => {
         console.error('Login error', error);
+        const errorMessage = error.response && error.response.data && error.response.data.message 
+          ? error.response.data.message 
+          : 'An error occurred. Please try again.';
+        notifyError(errorMessage);
       });
   };
 
