@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AddMuscle from './pages/AddMuscle';
-import AddExercise from './pages/AddExercise';
+import AddExercises from './pages/AddExercises';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
@@ -23,18 +23,10 @@ function App() {
           }
         />
         <Route
-          path="/add-exercise"
-          element={
-            <ProtectedRoute>
-              <AddExercise />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-        path="/add-exercise/:muscleName"
+        path="/add-exercise/:muscleName/:muscleId"
         element={
           <ProtectedRoute>
-            {/* <AddExercise/> */}
+            <AddExercises/>
           </ProtectedRoute>
         }
         />

@@ -51,7 +51,7 @@ const AddMuscle = () => {
       )
       .then((response) => {
         setMuscleName("");
-        setMuscles((prevMuscles) => [...prevMuscles, response.data]); 
+        setMuscles((prevMuscles) => [...prevMuscles, response.data.data]); 
         notifySuccess('Muscle added successfully!');
       })
       .catch(() => {
@@ -112,7 +112,7 @@ const AddMuscle = () => {
   };
 
   const handleNavigateToExercise = (muscleId,muscleName) => {
-    navigate(`/add-exercise/${muscleName}`)
+    navigate(`/add-exercise/${muscleName}/${muscleId}`)
   }
 
   return (
