@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Container, Typography, Button, TextField } from "@mui/material"; // Ensure TextField is imported
+import { Container, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"; // Import necessary components
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import useToast from '../hooks/useToast'; 
-import { CompressOutlined } from "@mui/icons-material";
+import useToast from '../hooks/useToast';
 
 const AddMuscle = () => {
   const [muscleName, setMuscleName] = useState("");
-  const [muscles, setMuscles] = useState([]); // Initialize as an empty array
+  const [muscles, setMuscles] = useState([]);
+  const [editMuscle, setEditMuscle] = useState(null); // For editing a muscle
+  const [updatedMuscleName, setUpdatedMuscleName] = useState(""); // For handling the updated name
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Delete confirmation dialog
+  const [muscleToDelete, setMuscleToDelete] = useState(null); // Muscle to delete
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { userId, token } = useAuth();
-  console.log("token is",token);  
-  console.log("user id is",userId);  
-  const { notifySuccess, notifyError } = useToast(); 
+  console.log("user id is ",userId);
+  const { notifySuccess, notifyError } = useToast();
 
   useEffect(() => {
     const fetchMuscles = async () => {
@@ -22,10 +24,8 @@ const AddMuscle = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("response is",response);
-        setMuscles(response.data.muscle_list); // Adjust based on actual response structure
+        setMuscles(response.data.muscle_list);
       } catch (error) {
-        console.error("Error fetching muscles", error);
         notifyError('Error fetching muscles');
       }
     };
@@ -37,7 +37,7 @@ const AddMuscle = () => {
     e.preventDefault();
 
     axios
-      .post(`${API_BASE_URL}/muscle`, 
+      .post(`${API_BASE_URL}/muscle`,
         { name: muscleName, user_id: userId },
         {
           headers: {
@@ -47,12 +47,63 @@ const AddMuscle = () => {
       )
       .then((response) => {
         setMuscleName("");
-        setMuscles((prevMuscles) => [...prevMuscles, response.data]); // Assuming response.data is the new muscle
+        setMuscles((prevMuscles) => [...prevMuscles, response.data]); // Add new muscle
         notifySuccess('Muscle added successfully!');
       })
-      .catch((error) => {
+      .catch(() => {
         notifyError('Something went wrong!');
-        console.error("Error adding muscle", error);
+      });
+  };
+
+  const handleEditMuscle = (muscle) => {
+    setEditMuscle(muscle);
+    setUpdatedMuscleName(muscle.name); // Set current name for editing
+  };
+
+  const handleUpdateMuscle = () => {
+    axios
+      .put(`${API_BASE_URL}/muscle`, 
+        { name: updatedMuscleName, user_id: userId, muscle_id : editMuscle.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      )
+      .then(() => {
+        setMuscles((prevMuscles) =>
+          prevMuscles.map((muscle) =>
+            muscle.id === editMuscle.id ? { ...muscle, name: updatedMuscleName } : muscle
+          )
+        );
+        setEditMuscle(null); 
+        notifySuccess('Muscle updated successfully!');
+      })
+      .catch(() => {
+        notifyError('Error updating muscle');
+      });
+  };
+
+  const handleDeleteMuscle = (muscle) => {
+    setIsDeleteDialogOpen(true);
+    setMuscleToDelete(muscle); 
+  };
+
+  const confirmDeleteMuscle = () => {
+    axios
+      .delete(`${API_BASE_URL}/muscle/${muscleToDelete.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
+      .then(() => {
+        setMuscles((prevMuscles) => prevMuscles.filter(muscle => muscle.id !== muscleToDelete.id));
+        setIsDeleteDialogOpen(false);
+        setMuscleToDelete(null);
+        notifySuccess('Muscle deleted successfully!');
+      })
+      .catch(() => {
+        notifyError('Error deleting muscle');
       });
   };
 
@@ -78,12 +129,62 @@ const AddMuscle = () => {
       <Typography variant="h5" gutterBottom>
         Added Muscles
       </Typography>
-      {Array.isArray(muscles) && muscles.map((muscle) => (
-        <div key={muscle.id}>
+      {muscles.map((muscle) => (
+        <div key={muscle.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <span>{muscle.name}</span>
-          {/* Add Edit and Delete buttons here */}
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleEditMuscle(muscle)}
+              style={{ marginRight: '10px' }}
+            >
+              Edit
+            </Button>
+            <Button variant="contained" color="error" onClick={() => handleDeleteMuscle(muscle)}>
+              Delete
+            </Button>
+          </div>
         </div>
       ))}
+
+      {editMuscle && (
+        <Dialog open={true} onClose={() => setEditMuscle(null)}>
+          <DialogTitle>Edit Muscle</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Muscle Name"
+              value={updatedMuscleName}
+              onChange={(e) => setUpdatedMuscleName(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setEditMuscle(null)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateMuscle} color="primary">
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>Are you sure you want to delete this muscle?</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteMuscle} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
