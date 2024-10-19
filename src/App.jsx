@@ -30,6 +30,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+        path="/add-exercise/:muscleName"
+        element={
+          <ProtectedRoute>
+            {/* <AddExercise/> */}
+          </ProtectedRoute>
+        }
+        />
         <Route path="*" element={<Login />} />
       </Routes>
       <ToastContainer />

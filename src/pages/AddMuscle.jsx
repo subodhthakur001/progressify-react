@@ -3,17 +3,21 @@ import { Container, Typography, Button, TextField, Dialog, DialogActions, Dialog
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
 import useToast from '../hooks/useToast';
+import { getToken } from "../common_utils/auth/getToken";
+import { getUserId } from "../common_utils/auth/getUserId";
+import { useNavigate } from "react-router-dom";
 
 const AddMuscle = () => {
   const [muscleName, setMuscleName] = useState("");
+  const navigate = useNavigate();
   const [muscles, setMuscles] = useState([]);
   const [editMuscle, setEditMuscle] = useState(null); // For editing a muscle
   const [updatedMuscleName, setUpdatedMuscleName] = useState(""); // For handling the updated name
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Delete confirmation dialog
   const [muscleToDelete, setMuscleToDelete] = useState(null); // Muscle to delete
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const { userId, token } = useAuth();
-  console.log("user id is ",userId);
+  const token = getToken();
+  const userId = getUserId();
   const { notifySuccess, notifyError } = useToast();
 
   useEffect(() => {
@@ -47,7 +51,7 @@ const AddMuscle = () => {
       )
       .then((response) => {
         setMuscleName("");
-        setMuscles((prevMuscles) => [...prevMuscles, response.data]); // Add new muscle
+        setMuscles((prevMuscles) => [...prevMuscles, response.data]); 
         notifySuccess('Muscle added successfully!');
       })
       .catch(() => {
@@ -57,7 +61,7 @@ const AddMuscle = () => {
 
   const handleEditMuscle = (muscle) => {
     setEditMuscle(muscle);
-    setUpdatedMuscleName(muscle.name); // Set current name for editing
+    setUpdatedMuscleName(muscle.name);
   };
 
   const handleUpdateMuscle = () => {
@@ -107,6 +111,10 @@ const AddMuscle = () => {
       });
   };
 
+  const handleNavigateToExercise = (muscleId,muscleName) => {
+    navigate(`/add-exercise/${muscleName}`)
+  }
+
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom>
@@ -130,7 +138,7 @@ const AddMuscle = () => {
         Added Muscles
       </Typography>
       {muscles.map((muscle) => (
-        <div key={muscle.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <div key={muscle.id} onClick={() => handleNavigateToExercise(muscle.id,muscle.name)} style={{ cursor: "pointer", display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <span>{muscle.name}</span>
           <div>
             <Button
